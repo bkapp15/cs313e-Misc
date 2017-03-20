@@ -1,8 +1,13 @@
-# File: DataStructures.py
-""" These are all the classes of data structure objects that were gone 
+# File Name: DataStructures.py
+
+# Author: Blake Kappel
+
+""" 
+These are all the classes of data structure objects that were gone 
 over during Mitra's CS313e class of the Spring 2015 semester. This file
 was mad in an attempt to be able to import the classes from this file
-into other programs"""
+into other programs
+"""
 
 """==========================Stack Class=======================+"""
 class Stack (object):
@@ -36,60 +41,233 @@ class Link (object):
     self.next = next
     
 class LinkedList (object):
+
+  # Constructor
   def __init__ (self):
     self.first = None
 
-  def insertFirst (self, data):
-    newLink = Link (data)
+  # get number of links
+  def getNumLinks (self):
+        count = 0
+        current = self.first
+        while current != None:
+          count += 1
+          current = current.next
+        return (count)
+
+  # Add data at the beginning of the list
+  def addFirst (self, data):
+    newLink = Link(data)
     newLink.next = self.first
     self.first = newLink
 
-  def insertLast (self, data):
-    newLink = Link (data)
-    current = self.first
-
-    if (current == None):
+  # Add data at the end of a list
+  def addLast (self, data):
+    newLink = Link (data) # Always have to make a new Link
+    if self.isEmpty():
       self.first = newLink
       return
 
+    current = self.first
+    # Last link is when 'next = None'
     while (current.next != None):
       current = current.next
+    current.next = newLink # Where the addition takes place
 
-    current.next = newLink
+  # Add data in an ordered list in ascending order
+  def addInOrder (self, data):
+    newLink = Link(data)
+    # If empty, assign newLink to first link
+    if self.isEmpty():
+      self.first = newLink
+      return
 
-  def findLink (self, data):
     current = self.first
-    if (current == None):
+    previous = self.first
+    # Making sure it iterates properly
+    while (current.data <= newLink.data):
+      previous = current
+      current = current.next
+      # If it reaches the end, add link to last position
+      if (current == None):
+        self.addLast(data)
+        return
+    # If the new link goes at the beginning
+    if (current == self.first):
+      self.addFirst(data)
+      return
+    # Where the addition of new link takes place
+    previous.next = newLink
+    newLink.next = current
+
+  # Search in an unordered list, return None if not found
+  def findUnordered (self, data):
+    if self.isEmpty(): # If empty
       return None
 
-    while (current.data != data):
-      if (current.next == None):
-        return None
-      else:
-        current = current.next
+    current = self.first
+    while (current != None):
+      if (current.data == data):
+        return (current)
+      current = current.next
 
     return current
 
-  def deleteLink (self, data):
-    current = self.first
-    previous = self.first
-
-    if (current == None):
+  # Search in an ordered list, return None if not found
+  def findOrdered (self, data):
+    if self.isEmpty(): # If empty
       return None
+
+    current = self.first
+    while (current != None):
+      if (current.data == data):
+        return (current)
+      current = current.next
+
+    return current
+
+  # Delete and return Link from an unordered list or None if not found
+  def delete (self, data):
+    if self.isEmpty(): # if empty
+      return None
+
+    current = self.first # start at beginning
+    previous = self.first
 
     while (current.data != data):
       if (current.next == None):
         return None
       else:
         previous = current
-    current = current.next
+        current = current.next
 
     if (current == self.first):
       self.first = self.first.next
     else:
       previous.next = current.next
 
-    return current
+    return current # Return deleted link
+
+  # String representation of data 10 items to a line, 2 spaces between data
+  def __str__ (self):
+    st = ''
+    if self.isEmpty():
+      return st
+    st += str(self.first)
+    current = self.first.next
+    while (current != None):
+      st += ('  ' + str(current))
+      current = current.next
+    return st
+
+  # Copy the contents of a list and return new list
+  def copyList (self):
+    newLL = LinkedList()
+
+    current = self.first
+    while (current != None):
+      newLL.addLast(current.data)
+      current = current.next
+    return newLL
+
+  # Reverse the contents of a list and return new list
+  def reverseList (self):
+    newLL = LinkedList()
+    newList = [] # Built in list object
+
+    # Append to the regular list object
+    current = self.first
+    while (current != None):
+      newList.append(current.data)
+      current = current.next
+
+    # Reversing by adding, item by item in regular list, to first position
+    for item in newList:
+      newLL.addFirst(item)
+    return newLL
+
+  # Sort the contents of a list in ascending order and return new list
+  def sortList (self):
+    newList = []
+    newLL = LinkedList()
+
+    current = self.first
+    while (current != None):
+      newList.append(current.data)
+      current = current.next
+
+    newList.sort()
+
+    for item in newList:
+      newLL.addLast(item)
+    return newLL
+
+  # Return True if a list is sorted in ascending order or False otherwise
+  def isSorted (self):
+    if self.isEmpty(): # if empty
+      return True
+
+    current = self.first
+    previous = self.first
+    while (current != None):
+      if (previous.data > current.data):
+        return False
+      previous = current
+      current = current.next
+    return True
+
+  # Return True if a list is empty or False otherwise
+  def isEmpty (self):
+    return (self.first == None)
+
+  # Merge two sorted lists and return new list in ascending order
+  def mergeList (self, b):
+    currentA = self.first
+    currentB = b.first
+    c = LinkedList()
+    while((currentA != None) and (currentB != None)):
+      if(currentA.data < currentB.data):
+        c.addLast(currentA.data)
+        currentA = currentA.next
+      else:
+        c.addLast(currentB.data)
+        currentB = currentB.next
+    while(currentA != None):
+      c.addLast(currentA.data)
+      currentA = currentA.next
+    while(currentB != None):
+      c.addLast(currentB.data)
+      currentB = currentB.next
+    return c
+
+  # Test if two lists are equal, item by item and return True
+  def isEqual (self, b):
+    # Make sure they are equal in length
+    if (self.getNumLinks() != b.getNumLinks()):
+      return False
+
+    sCurrent = self.first
+    bCurrent = b.first
+    while (sCurrent != None):
+      if (sCurrent.data != bCurrent.data):
+        return False
+      sCurrent = sCurrent.next
+      bCurrent = bCurrent.next
+    return True
+
+  # Return a new list, keeping only the first occurence of an element
+  # and removing all duplicates. Do not change the order of the elements.
+  def removeDuplicates (self):
+    newLL = LinkedList()
+    checkList = []
+
+    current = self.first
+    while (current != None):
+      if (current.data not in checkList):
+        newLL.addLast(current.data)
+        checkList.append(current.data)
+      current = current.next
+    return newLL
 
 """=======================Queue Class==========================="""
 class Queue (object):
@@ -267,6 +445,25 @@ class BS_Tree (object):
       return 0, len(self.inOrder(self.root.rChild, []))
     elif (self.root.lChild != None) and (self.root.rChild == None):
       return len(self.inOrder(self.root.lChild, [])), 0
+
+
+  # Find the node with the smallest value
+  def minimum (self):
+    current = self.root
+    parent = current
+    while (current != None):
+      parent = current
+      current = current.lChild
+    return parent
+
+  # Find the node with the largest value
+  def maximum (self):
+    current = self.root
+    parent = current
+    while (current != None):
+      parent = current
+      current = current.rChild
+    return parent
       
 """ Specific type of binary search tree used to encrypt and decrypt 
 strings """
@@ -475,3 +672,172 @@ class Graph(object):
     nVert = len(self.Vertices)
     for i in rang(nVert):
       (self.Vertices[i]).visited = False
+      
+"""=============Matrix Link and Matrix Objects and methods================="""
+class matLink (object):
+  def __init__ (self, row, col, data, next = None):
+    self.row = row
+    self.col = col
+    self.data = data
+    self.next = next
+
+class SparseMatrix (object):
+  def __init__ (self, row = 0, col = 0):
+    self.num_rows = row      # number of rows
+    self.num_cols = col      # number of columns
+    self.matrix = None
+
+  def insertLink (self, row, col, data):
+    # do nothing if data = 0
+    if (data == 0):
+      return
+
+    # create new link
+    newLink = matLink (row, col, data)
+
+    # if matrix is empty then the newLink is the first link
+    if (self.matrix == None):
+      self.matrix = newLink
+      return
+
+    # find position to insert
+    previous = self.matrix
+    current = self.matrix
+
+    while ((current != None) and (current.row < row)):
+      previous = current
+      current = current.next
+
+    # if the row is missing
+    if ((current != None) and (current.row > row)):
+      previous.next = newLink
+      newLink.next = current
+      return
+
+    # on the row, search by column
+    while ((current != None) and (current.col < col)):
+      previous = current
+      current = current.next
+
+    # if link already there do not insert but reset data
+    if ((current != None) and (current.row == row) and (current.col == col)):
+      current.data = data
+      return
+
+    # now insert newLink
+    previous.next = newLink
+    newLink.next = current
+
+    # Change self.num_rows and self.num_cols
+    current = self.matrix
+    max_col = 0
+    while (current.next != None):
+      current = current.next
+      if (current.col > max_col):
+        max_col = current.col
+
+    self.num_rows = current.row + 1
+    self.num_cols = max_col + 1
+
+  # return a row of the sparse matrix
+  def getRow(self, row_num):
+    # create a blank list
+    a = []
+
+    # search for the row
+    current = self.matrix
+    if current == None:
+      return a
+
+    while (current != None) and (current.row < row_num):
+      current = current.next
+
+    # If the row is not represented in linked list because they're all 0s
+    if (current != None) and (current.row > row_num):
+      for i in range(self.num_cols):
+        a.append(0)
+
+    # Found the row
+    if (current != None) and (current.row == row_num):
+      # Takes care of all possibilities
+      for j in range(self.num_cols):
+        if (current.col == j) and (current.next != None):
+          a.append(current.data)
+          current = current.next
+        elif (current.col == j) and (current.next == None):
+          a.append(current.data)
+        else:
+          a.append(0)
+
+    if (current == None) and (row_num < self.num_rows) and (a == []):
+      for j in range(self.num_cols):
+        a.append(0)
+
+    return a
+
+  # returns a column of the sparse matrix
+  def getCol (self, col_num):
+    # Create empty list to store column data
+    a = []
+
+    if (self.matrix == None) or (self.num_cols < col_num):
+      return a
+
+    # Loops through each row and uses getRow method to
+    for i in range(self.num_rows):
+      row = self.getRow(i)
+      a.append(row[col_num])
+
+    return a
+
+  # adds two sparse matrices
+  def __add__ (self, other):
+    # Check if dimensions are equal
+    if (self.num_rows != other.num_rows) or (self.num_cols != other.num_cols):
+      return
+
+    newMatrix = SparseMatrix()
+    for i in range(self.num_rows):
+      sRow = self.getRow(i)
+      oRow = other.getRow(i)
+      for j in range(len(sRow)):
+        data = sRow[j] + oRow[j]
+        newMatrix.insertLink(i, j, data)
+    return newMatrix
+
+  # multiplies two sparse matrices
+  def __mul__ (self, other):
+    if (self.num_cols != other.num_rows):
+      return
+
+    newMatrix = SparseMatrix()
+    for i in range(self.num_rows):
+      sRow = self.getRow(i)
+      for j in range(other.num_cols):
+        oCol = other.getCol(j)
+        multSum = 0
+        for k in range(len(sRow)):
+          multSum += sRow[k] * oCol[k]
+        newMatrix.insertLink(i, j, multSum)
+    return newMatrix
+
+
+  # returns a string representation of a matrix
+  def __str__ (self):
+    s = ''
+    current = self.matrix
+
+    # if the matrix is empty return blank string
+    if (current == None):
+      return s
+
+    for i in range (self.num_rows):
+      for j in range (self.num_cols):
+        if ((current != None) and (current.row == i) and (current.col == j)):
+          s = s + str (current.data) + " "
+          current = current.next
+        else:
+          s = s + "0 "
+      s = s + "\n"
+
+    return s
