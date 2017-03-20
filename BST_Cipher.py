@@ -125,7 +125,7 @@ class Tree (object):
     
 def main():
 
-  f = open('input.txt')
+  f = open('cipherInput.txt')
   s=0
   while(s<8):
     key = f.readline().strip()
