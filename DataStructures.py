@@ -3,8 +3,8 @@
 # Author: Blake Kappel
 
 """ 
-These are all the classes of data structure objects that were gone 
-over during Mitra's CS313e class of the Spring 2015 semester. This file
+These are all the classes of data structure objects that we created 
+during Mitra's CS313e class of the Spring 2015 semester. This file
 was mad in an attempt to be able to import the classes from this file
 into other programs
 """
